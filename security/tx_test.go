@@ -90,19 +90,8 @@ func TestTx1(t *testing.T) {
 	var input pb.Input
 	outpoint.Index = 0
 	outpoint.TxId = cbObjId[:]
-	outpointBytes, err := json.Marshal(outpoint)
-	if err != nil {
-		t.Error("cannot marshal outpointBytes")
-	}
 
-	outpointCanonical, err := jc.Transform(outpointBytes)
-	if err != nil {
-		t.Error("Could not canonicalize outpoint")
-	}
-
-	input.Sig = Sign(cbPriv, outpointCanonical)
 	input.Outpoint = &outpoint
-
 	txTx.Inputs = append(txTx.Inputs, &input)
 
 	var output1 pb.Output
@@ -114,12 +103,8 @@ func TestTx1(t *testing.T) {
 	output2.Pubkey = txPub
 	output2.Value = 1000000000000000
 	txTx.Outputs = append(txTx.Outputs, &output1, &output2)
-
-	//valid
+	err = SignTx(&txTx, cbPriv)
 	txBytesValid, err := json.Marshal(txTx)
-	if err != nil {
-		t.Error("could not marshal Tx")
-	}
 
 	out, err := ValidateTx(txBytesValid)
 	if !out {
@@ -128,10 +113,10 @@ func TestTx1(t *testing.T) {
 
 	//input < output
 	output2.Value = 2000000000000000
+	SignTx(&txTx, cbPriv)
 	txBytesValid, err = json.Marshal(txTx)
-	if err != nil {
-		t.Error("could not marshal Tx")
-	}
+	ss := string(txBytesValid)
+	fmt.Println(ss)
 
 	out, err = ValidateTx(txBytesValid)
 	if out {
