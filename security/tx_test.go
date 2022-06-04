@@ -115,8 +115,6 @@ func TestTx1(t *testing.T) {
 	output2.Value = 2000000000000000
 	SignTx(&txTx, cbPriv)
 	txBytesValid, err = json.Marshal(txTx)
-	ss := string(txBytesValid)
-	fmt.Println(ss)
 
 	out, err = ValidateTx(txBytesValid)
 	if out {
@@ -133,7 +131,7 @@ func TestTx1(t *testing.T) {
 		t.Error("could not marshal Tx")
 	}
 
-	out, err = ValidateTx(txBytesValid)
+	out, _ = ValidateTx(txBytesValid)
 	if out {
 		t.Error("Invalid transaction with bad input signature is validated")
 	}
